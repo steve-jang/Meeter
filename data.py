@@ -94,6 +94,7 @@ class Data:
         self.users = {}
         self.events = {}
         self.reset_codes = {}
+        self.event_next_id = 1
 
 
 data = Data()

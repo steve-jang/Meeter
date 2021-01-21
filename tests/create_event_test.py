@@ -32,12 +32,12 @@ def test_invalid_member_username(bot):
     expect_error(create_event, AuthError, bot.username, "a", ["a", "b"])
 
 
-def test_long_title(bot):
+@pytest.mark.parametrize("title", ["", "a" * (MAX_TITLE + 1)])
+def test_invalid_title(bot, title):
     """
-    Test when the title is too long.
+    Test when the title is too long or empty.
     """
-    expect_error(create_event, InputError, bot.username,
-                 "a" * (MAX_TITLE + 1), [])
+    expect_error(create_event, InputError, bot.username, title, [])
 
 
 @pytest.mark.parametrize("length", [MIN_EVENT - 1, MIN_EVENT - 3,
@@ -77,5 +77,5 @@ def test_success_with_members(bot):
     e_id = create_event(bot.username, "ABC", members)
 
     members.add(bot.username)
-    assert data.events[e_id].member_username == members
+    assert data.events[e_id].member_usernames == members
     assert data.events[e_id].admin_username == bot.username

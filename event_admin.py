@@ -3,12 +3,19 @@ A file containing functions related to admin actions in Events.
 """
 
 
+from datetime import datetime
+from data import data, Event
+from error import AuthError, InputError
+
+
 MAX_TITLE = 100
 MIN_EVENT = 1
 MAX_EVENT = 14 * 24
+UNIQUE_ID = 1
 
 
-def create_event(username, title, members, event_length=0, event_deadline=None):
+def create_event(username, title, members,
+                 event_length=None, event_deadline=None):
     """
     Create an event with the given details.
 
@@ -32,7 +39,34 @@ def create_event(username, title, members, event_length=0, event_deadline=None):
                 event_length is less than 1 or greater than 14 * 24 (fortnight)
                 event_deadline is a date in the past
     """
-    pass
+    if (not data.users.get(username) or
+        not all([data.users.get(u) for u in members])):
+        raise AuthError("Username(s) non-existent")
+
+    if not data.users[username].logged_in:
+        raise AuthError("User not logged in")
+
+    if not len(title) or len(title) > MAX_TITLE:
+        raise InputError("Title length is invalid")
+
+    if (event_length != None and
+        (event_length < MIN_EVENT or event_length > MAX_EVENT)):
+        raise InputError("Event length is invalid")
+
+    if event_deadline and event_deadline < datetime.now().date():
+        raise InputError("Event deadline is invalid")
+
+    new_event = Event(data.event_next_id, title, username)
+    data.event_next_id += 1
+
+    for u in members:
+        new_event.member_usernames.add(u)
+
+    new_event.event_length = event_length
+    new_event.event_deadline = event_deadline
+
+    data.events[new_event.event_id] = new_event
+    return new_event.event_id
 
 
 def invite_user(admin_username, member_username, event_id):
