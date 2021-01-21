@@ -35,3 +35,13 @@ def test_success(bot):
 
     # Check if data was updated
     assert data.users.get(bot.username) == bot
+
+
+def test_already_logged_in(bot):
+    """
+    Test logging in when already logged in.
+    """
+    log_in(bot.username, BOT_PASSWORD)
+
+    with pytest.raises(AuthError):
+        log_in(bot.username, BOT_PASSWORD)

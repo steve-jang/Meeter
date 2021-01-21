@@ -74,7 +74,7 @@ class User:
         self.first_name = first_name
         self.last_name = last_name
         self.joined_event_ids = []
-        self.logged_in = True
+        self.logged_in = False
 
 
 class Data:
