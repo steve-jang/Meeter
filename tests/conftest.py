@@ -16,5 +16,12 @@ def clear():
 
 
 @pytest.fixture
+def logged_out_bot():
+    bot = create_bot()
+    bot.logged_in = False
+    return bot
+
+
+@pytest.fixture
 def bot():
     return create_bot()

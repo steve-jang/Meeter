@@ -10,6 +10,7 @@ BOT_LAST_NAME = "Botson"
 UNIQUE_ID = 1
 
 
+import pytest
 from auth import register
 from data import data
 
@@ -29,3 +30,11 @@ def create_bot():
              BOT_LAST_NAME, username + "@gmail.com")
 
     return data.users.get(username)
+
+
+def expect_error(f, error, *params):
+    """
+    Test whether error is raised when calling f(params).
+    """
+    with pytest.raises(error):
+        f(*params)
