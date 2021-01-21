@@ -32,9 +32,9 @@ def create_bot():
     return data.users.get(username)
 
 
-def expect_error(f, error, *params):
+def expect_error(f, error, *args, **kwargs):
     """
-    Test whether error is raised when calling f(params).
+    Test whether error is raised when calling f(*args, **kwargs).
     """
     with pytest.raises(error):
-        f(*params)
+        f(*args, **kwargs)
