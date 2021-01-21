@@ -3,7 +3,6 @@ Tests for register()
 """
 
 
-import pytest
 from auth import register, MAX_USERNAME, MIN_PASSWORD, MAX_NAME
 from data import data
 from error import InputError

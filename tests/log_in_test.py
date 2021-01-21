@@ -3,7 +3,6 @@ Tests for log_in()
 """
 
 
-import pytest
 from data import data
 from auth import log_in
 from error import AuthError
