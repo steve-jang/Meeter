@@ -3,6 +3,10 @@ A file containing all functions related to logging in/out, registering etc.
 """
 
 
+from hashlib import sha256
+from data import User, data
+
+
 def log_in(username, password):
     """
     Log a user in if given a valid username/password.
@@ -13,6 +17,11 @@ def log_in(username, password):
 
         Returns:
             None
+
+        Exceptions:
+            AuthError when one of:
+                username does not exist
+                username exists and password incorrect
     """
     pass
 
@@ -44,7 +53,10 @@ def register(username, password, first_name, last_name, email):
         Returns:
             None
     """
-    pass
+    # This is a stub
+    hash_pwd = sha256(password.encode()).hexdigest()
+    new_user = User(username, hash_pwd, email, first_name, last_name)
+    data.users[username] = new_user
 
 
 def request_password_reset(username):

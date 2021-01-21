@@ -25,6 +25,8 @@ class Event:
 
     Attributes
     ----------
+    event_id : int
+        unique ID of event
     title : str
         name of the event
     admin_username : str
@@ -35,7 +37,8 @@ class Event:
         dict of username-(dict of region_id-Region pairs) pairs representing
         each members' available intervals of time
     """
-    def __init__(self, title, admin_username):
+    def __init__(self, event_id, title, admin_username):
+        self.event_id = event_id
         self.title = title
         self.admin_username = admin_username
         self.member_usernames = {admin_username}
@@ -48,6 +51,8 @@ class User:
 
     Attributes
     ----------
+    username : str
+        username of user
     hash_pwd : str
         hashed password using sha256
     email : str
@@ -62,7 +67,8 @@ class User:
     logged_in : bool
         True if logged in, False otherwise
     """
-    def __init__(self, hash_pwd, email, first_name, last_name):
+    def __init__(self, username, hash_pwd, email, first_name, last_name):
+        self.username = username
         self.hash_pwd = hash_pwd
         self.email = email
         self.first_name = first_name
