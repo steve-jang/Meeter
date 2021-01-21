@@ -52,8 +52,19 @@ def log_out(username):
 
         Returns:
             None
+
+        Exceptions:
+            AuthError when one of:
+                username does not exist
+                username exists but user is already logged out
     """
-    pass
+    if not data.users.get(username):
+        raise AuthError("Username does not exist")
+
+    if not data.users[username].logged_in:
+        raise AuthError("Already logged out")
+
+    data.users[username].logged_in = False
 
 
 def register(username, password, first_name, last_name, email):
