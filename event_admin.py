@@ -6,6 +6,8 @@ A file containing functions related to admin actions in Events.
 from datetime import datetime
 from data import data, Event
 from error import AuthError, InputError
+from error_checks import (check_username, check_event_id, check_logged_in,
+                          check_is_admin)
 
 
 MAX_TITLE = 100
@@ -31,20 +33,19 @@ def create_event(username, title, members,
 
         Exceptions:
             AuthError if any of:
-                username does not exist
-                a username in the members list does not exist
                 the user is not logged in
             InputError if any of:
+                username does not exist
+                a username in the members list does not exist
                 title is longer than 100 characters or empty
                 event_length is less than 1 or greater than 14 * 24 (fortnight)
                 event_deadline is a date in the past
     """
-    if (not data.users.get(username) or
-        not all([data.users.get(u) for u in members])):
-        raise AuthError("Username(s) non-existent")
+    check_username(username)
+    for u in members:
+        check_username(u)
 
-    if not data.users[username].logged_in:
-        raise AuthError("User not logged in")
+    check_logged_in(username)
 
     if not len(title) or len(title) > MAX_TITLE:
         raise InputError("Title length is invalid")
@@ -90,24 +91,13 @@ def invite_user(admin_username, member_username, event_id):
                 member_username does not exist
                 admin_username does not exist
     """
-    admin = data.users.get(admin_username)
+    check_username(admin_username)
+    check_event_id(event_id)
+    check_is_admin(admin_username, event_id)
+    check_logged_in(admin_username)
+    check_username(member_username)
+
     event = data.events.get(event_id)
-    invitee = data.users.get(member_username)
-    if not admin:
-        raise InputError("Username does not exist")
-
-    if not event:
-        raise InputError("Event does not exist")
-
-    if event.admin_username != admin_username:
-        raise AuthError("User has no permission to invite")
-
-    if not admin.logged_in:
-        raise AuthError("User is not logged in")
-
-    if not invitee:
-        raise InputError("Invitee does not exist")
-
     event.member_usernames.add(member_username)
 
 

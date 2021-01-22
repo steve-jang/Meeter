@@ -15,7 +15,7 @@ def test_invalid_username():
     """
     Test a non-existent username.
     """
-    expect_error(create_event, AuthError, "a", "Event", [])
+    expect_error(create_event, InputError, "a", "Event", [])
 
 
 def test_not_logged_in(logged_out_bot):
@@ -29,7 +29,7 @@ def test_invalid_member_username(bot):
     """
     Test when there is a non-existent username in the members list.
     """
-    expect_error(create_event, AuthError, bot.username, "a", ["a", "b"])
+    expect_error(create_event, InputError, bot.username, "a", ["a", "b"])
 
 
 @pytest.mark.parametrize("title", ["", "a" * (MAX_TITLE + 1)])

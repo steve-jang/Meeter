@@ -5,7 +5,7 @@ Tests for log_in()
 
 from data import data
 from auth import log_in
-from error import AuthError
+from error import AuthError, InputError
 from helpers import BOT_PASSWORD, expect_error
 
 
@@ -14,7 +14,7 @@ def test_bad_username():
     Test a non existent username
     """
     # No users currently exist, so any username is invalid
-    expect_error(log_in, AuthError, "badusername", "...")
+    expect_error(log_in, InputError, "badusername", "...")
 
 
 def test_bad_password(logged_out_bot):
@@ -41,4 +41,4 @@ def test_already_logged_in(logged_out_bot):
     """
     log_in(logged_out_bot.username, BOT_PASSWORD)
 
-    expect_error(log_in, AuthError, logged_out_bot.username, BOT_PASSWORD)
+    expect_error(log_in, InputError, logged_out_bot.username, BOT_PASSWORD)

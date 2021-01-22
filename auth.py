@@ -6,6 +6,7 @@ A file containing all functions related to logging in/out, registering etc.
 from hashlib import sha256
 from data import User, data
 from error import AuthError, InputError
+from error_checks import check_username, check_logged_in
 
 
 MAX_USERNAME = 20
@@ -26,19 +27,20 @@ def log_in(username, password):
 
         Exceptions:
             AuthError when one of:
-                username does not exist
                 username exists and password incorrect
+
+            InputError when:
+                username does not exist
                 username exists, password correct, and already logged in
     """
-    if not data.users.get(username):
-        raise AuthError("Username does not exist")
+    check_username(username)
 
     hashed_password = sha256(password.encode()).hexdigest()
     if data.users[username].hash_pwd != hashed_password:
         raise AuthError("Incorrect password")
 
     if data.users[username].logged_in:
-        raise AuthError("Already logged in")
+        raise InputError("Already logged in")
 
     data.users[username].logged_in = True
 
@@ -55,14 +57,12 @@ def log_out(username):
 
         Exceptions:
             AuthError when one of:
-                username does not exist
                 username exists but user is already logged out
+            InputError when:
+                username does not exist
     """
-    if not data.users.get(username):
-        raise AuthError("Username does not exist")
-
-    if not data.users[username].logged_in:
-        raise AuthError("Already logged out")
+    check_username(username)
+    check_logged_in(username)
 
     data.users[username].logged_in = False
 

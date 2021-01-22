@@ -6,14 +6,14 @@ Tests for log_out
 from data import data
 from helpers import expect_error
 from auth import log_out
-from error import AuthError
+from error import AuthError, InputError
 
 
 def test_invalid_username():
     """
     Test a nonexistent username.
     """
-    expect_error(log_out, AuthError, "abc")
+    expect_error(log_out, InputError, "abc")
 
 
 def test_already_logged_out(logged_out_bot):
