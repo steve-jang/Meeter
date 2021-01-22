@@ -90,7 +90,25 @@ def invite_user(admin_username, member_username, event_id):
                 member_username does not exist
                 admin_username does not exist
     """
-    pass
+    admin = data.users.get(admin_username)
+    event = data.events.get(event_id)
+    invitee = data.users.get(member_username)
+    if not admin:
+        raise InputError("Username does not exist")
+
+    if not event:
+        raise InputError("Event does not exist")
+
+    if event.admin_username != admin_username:
+        raise AuthError("User has no permission to invite")
+
+    if not admin.logged_in:
+        raise AuthError("User is not logged in")
+
+    if not invitee:
+        raise InputError("Invitee does not exist")
+
+    event.member_usernames.add(member_username)
 
 
 def remove_user(admin_username, member_username, event_id):
