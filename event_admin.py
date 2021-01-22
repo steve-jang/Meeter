@@ -80,6 +80,15 @@ def invite_user(admin_username, member_username, event_id):
 
         Returns:
             None
+
+        Exceptions:
+            AuthError if any of:
+                admin_username is not the event admin's username
+                admin_username is not logged in
+            InputError if any of:
+                event_id does not exist
+                member_username does not exist
+                admin_username does not exist
     """
     pass
 
