@@ -52,6 +52,13 @@ def test_remove_self(event):
                  admin.username, admin.username, event_id)
 
 
+def test_nonexistent_event(bot):
+    """
+    Test when the event does not exist.
+    """
+    expect_error(remove_user, InputError, bot.username, "a", 1)
+
+
 def test_success_remove(event, bot):
     """
     Test a successful removal of an event member.
