@@ -110,6 +110,15 @@ def remove_user(admin_username, member_username, event_id):
             member_username (str): username of member being removed
             event_id (int): unique ID of event
 
+        Exceptions:
+            InputError when any of:
+                admin_username does not exist
+                member_username is not in the event with event_id
+                member_username is admin_username
+            AuthError when any of:
+                admin_username is not the event admin
+                admin_usernmae is not logged in
+
         Returns:
             None
     """
