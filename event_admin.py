@@ -7,7 +7,7 @@ from datetime import datetime
 from data import data, Event
 from error import AuthError, InputError
 from error_checks import (check_username, check_event_id, check_logged_in,
-                          check_is_admin)
+                          check_is_admin, check_is_member)
 
 
 MAX_TITLE = 100
@@ -115,14 +115,26 @@ def remove_user(admin_username, member_username, event_id):
                 admin_username does not exist
                 member_username is not in the event with event_id
                 member_username is admin_username
+                event_id does not exist
             AuthError when any of:
                 admin_username is not the event admin
-                admin_usernmae is not logged in
+                admin_username is not logged in
 
         Returns:
             None
     """
-    pass
+    check_username(admin_username)
+    check_event_id(event_id)
+    check_is_admin(admin_username, event_id)
+    check_logged_in(admin_username)
+    check_username(member_username)
+    check_is_member(member_username, event_id)
+
+    if admin_username == member_username:
+        raise InputError("Cannot remove self")
+
+    event = data.events.get(event_id)
+    event.member_usernames.remove(member_username)
 
 
 def edit_event_length(admin_username, new_length, event_id):

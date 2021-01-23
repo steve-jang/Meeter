@@ -26,3 +26,9 @@ def check_is_admin(username, event_id):
     event = data.events.get(event_id)
     if username != event.admin_username:
         raise AuthError("User has no permission")
+
+
+def check_is_member(username, event_id):
+    event = data.events.get(event_id)
+    if username not in event.member_usernames:
+        raise InputError("User not in event")
