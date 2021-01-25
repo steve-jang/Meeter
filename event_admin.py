@@ -180,6 +180,15 @@ def edit_event_deadline(admin_username, new_date, event_id):
             new_date (datetime.date): new event deadline date
             event_id (int): unique ID of event
 
+        Exceptions:
+            AuthError when any of:
+                admin_username is not logged in
+                admin_username is not the event admin
+            InputError when any of:
+                admin_username does not exist
+                event_id does not exist
+                new_date is a date in the past
+
         Returns:
             None
     """
