@@ -3,7 +3,7 @@ A file containing functions related to admin actions in Events.
 """
 
 
-from datetime import datetime
+from datetime import datetime, date
 from data import data, Event
 from error import AuthError, InputError
 from error_checks import (check_username, check_event_id, check_logged_in,
@@ -192,4 +192,13 @@ def edit_event_deadline(admin_username, new_date, event_id):
         Returns:
             None
     """
-    pass
+    check_username(admin_username)
+    check_event_id(event_id)
+    check_is_admin(admin_username, event_id)
+    check_logged_in(admin_username)
+
+    if new_date < date.today():
+        raise InputError("Invalid deadline")
+
+    event = data.events.get(event_id)
+    event.event_deadline = new_date
