@@ -81,7 +81,7 @@ def test_success_edit(event):
 
     for d in range(MAX_DAYS):
         for t in range(INTERVALS):
-            if (d - offset) % 7 == 0 and start <= t <= end:
+            if (d - offset) % 7 == 0 and start <= t < end:
                 assert schedule.times[d][t]
             else:
                 assert not schedule.times[d][t]
@@ -104,7 +104,7 @@ def test_success_edit_member(event, bot):
 
     for d in range(MAX_DAYS):
         for t in range(INTERVALS):
-            if (d - offset) % 7 == 0 and start <= t <= end:
+            if (d - offset) % 7 == 0 and start <= t < end:
                 assert schedule.times[d][t]
             else:
                 assert not schedule.times[d][t]

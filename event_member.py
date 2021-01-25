@@ -96,7 +96,7 @@ def edit_availability_weekly(username, event_id, edit_mode, day, start, end):
     end = end.hour * 2 + end.minute // 30
 
     for d in range(offset, MAX_DAYS, 7):
-        for t in range(start, end + 1):
+        for t in range(start, end):
             schedule.times[d][t] = edit_mode
 
 
