@@ -3,6 +3,12 @@ A file containing functions related to general member actions in an Event.
 """
 
 
+from error import AuthError, InputError
+from error_checks import (check_event_id, check_username, check_logged_in,
+                          check_is_member)
+from data import data
+
+
 def leave_event(username, event_id):
     """
     Leave an event.
@@ -23,7 +29,16 @@ def leave_event(username, event_id):
         Returns:
             None
     """
-    pass
+    check_username(username)
+    check_event_id(event_id)
+    check_is_member(username, event_id)
+    check_logged_in(username)
+
+    event = data.events.get(event_id)
+    if username == event.admin_username:
+        raise InputError("Admin cannot leave event")
+
+    event.member_usernames.remove(username)
 
 
 def edit_availability_weekly(username, event_id, edit_mode,
