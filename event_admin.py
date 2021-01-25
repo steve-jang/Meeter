@@ -159,7 +159,16 @@ def edit_event_length(admin_username, new_length, event_id):
         Returns:
             None
     """
-    pass
+    check_username(admin_username)
+    check_event_id(event_id)
+    check_is_admin(admin_username, event_id)
+    check_logged_in(admin_username)
+
+    if not (MIN_EVENT <= new_length <= MAX_EVENT):
+        raise InputError("Invalid event length")
+
+    event = data.events.get(event_id)
+    event.event_length = new_length
 
 
 def edit_event_deadline(admin_username, new_date, event_id):
