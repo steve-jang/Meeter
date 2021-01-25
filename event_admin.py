@@ -146,6 +146,16 @@ def edit_event_length(admin_username, new_length, event_id):
             new_length (int): new event length in hours
             event_id (int): unique ID of event
 
+        Exceptions:
+            AuthError when any of:
+                admin_username is not logged in
+                admin_username is not the event admin
+
+            InputError when any of:
+                new_length is 0 or longer than 14 * 24 (fortnight)
+                event_id does not exist
+                admin_username does not exist
+
         Returns:
             None
     """

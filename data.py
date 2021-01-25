@@ -43,6 +43,8 @@ class Event:
         self.admin_username = admin_username
         self.member_usernames = {admin_username}
         self.availabilities = {admin_username: {}}
+        self.event_length = None
+        self.event_deadline = None
 
 
 class User:
