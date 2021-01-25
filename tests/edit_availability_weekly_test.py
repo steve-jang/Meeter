@@ -8,6 +8,7 @@ from data import data, MAX_DAYS, INTERVALS
 from error import AuthError, InputError
 from helpers import expect_error
 from auth import log_out
+from event_admin import invite_user
 from event_member import (edit_availability_weekly as edit,
                           MON, TUE, WED, THU, FRI, SAT, SUN)
 
@@ -32,7 +33,7 @@ def test_not_member(event, bot):
     Test when the user is not a member of the event.
     """
     _, event_id = event
-    expect_error(edit, AuthError, bot.username, event_id,
+    expect_error(edit, InputError, bot.username, event_id,
                  True, SUN, time(1), time(2))
 
 
@@ -76,7 +77,30 @@ def test_success_edit(event):
     creation_day = data.events[event_id].create_time.weekday()
     offset = (MON - creation_day + 7) % 7
     start = 13 * 2
-    end = 15 * 2
+    end = 14 * 2 + 1
+
+    for d in range(MAX_DAYS):
+        for t in range(INTERVALS):
+            if (d - offset) % 7 == 0 and start <= t <= end:
+                assert schedule.times[d][t]
+            else:
+                assert not schedule.times[d][t]
+
+
+def test_success_edit_member(event, bot):
+    """
+    Test a successful edit by a non-admin.
+    """
+    admin, event_id = event
+    invite_user(admin.username, bot.username, event_id)
+    edit(bot.username, event_id, True, MON, time(13), time(14, 30))
+
+    # Check that the schedule updated for every week
+    schedule = data.events[event_id].availabilities[bot.username]
+    creation_day = data.events[event_id].create_time.weekday()
+    offset = (MON - creation_day + 7) % 7
+    start = 13 * 2
+    end = 14 * 2 + 1
 
     for d in range(MAX_DAYS):
         for t in range(INTERVALS):

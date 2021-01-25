@@ -4,7 +4,7 @@ A file containing functions related to admin actions in Events.
 
 
 from datetime import datetime, date
-from data import data, Event
+from data import data, Event, Schedule
 from error import AuthError, InputError
 from error_checks import (check_username, check_event_id, check_logged_in,
                           check_is_admin, check_is_member)
@@ -99,6 +99,7 @@ def invite_user(admin_username, member_username, event_id):
 
     event = data.events.get(event_id)
     event.member_usernames.add(member_username)
+    event.availabilities[member_username] = Schedule(member_username)
 
 
 def remove_user(admin_username, member_username, event_id):
@@ -135,6 +136,7 @@ def remove_user(admin_username, member_username, event_id):
 
     event = data.events.get(event_id)
     event.member_usernames.remove(member_username)
+    del event.availabilities[member_username]
 
 
 def edit_event_length(admin_username, new_length, event_id):

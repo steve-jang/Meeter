@@ -13,10 +13,10 @@ SAT = 5
 SUN = 6
 
 
+from data import data, MAX_DAYS
 from error import AuthError, InputError
 from error_checks import (check_event_id, check_username, check_logged_in,
                           check_is_member)
-from data import data
 
 
 def leave_event(username, event_id):
@@ -49,6 +49,7 @@ def leave_event(username, event_id):
         raise InputError("Admin cannot leave event")
 
     event.member_usernames.remove(username)
+    del event.availabilities[username]
 
 
 def edit_availability_weekly(username, event_id, edit_mode, day, start, end):
@@ -70,14 +71,33 @@ def edit_availability_weekly(username, event_id, edit_mode, day, start, end):
                 event_id does not exist
                 day is not valid
                 end is at or before start
+                username is not member of event
             AuthError when any of:
                 username is not logged in
-                username is not member of event
 
         Returns:
             None
     """
-    pass
+    check_username(username)
+    check_event_id(event_id)
+    check_is_member(username, event_id)
+    check_logged_in(username)
+
+    if not (MON <= day <= SUN):
+        raise InputError("Invalid week day")
+
+    if end <= start:
+        raise InputError("Invalid time interval")
+
+    event = data.events.get(event_id)
+    schedule = event.availabilities[username]
+    offset = day - event.create_time.weekday()
+    start = start.hour * 2 + start.minute // 30
+    end = end.hour * 2 + end.minute // 30
+
+    for d in range(offset, MAX_DAYS, 7):
+        for t in range(start, end + 1):
+            schedule.times[d][t] = edit_mode
 
 
 def edit_avaliability_special(username, event_id, edit_mode, start, end):
