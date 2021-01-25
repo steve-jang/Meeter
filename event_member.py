@@ -10,6 +10,18 @@ def leave_event(username, event_id):
         Parameters:
             username (str): username of event leaver
             event_id (int): unique ID of event
+
+        Exceptions:
+            InputError when any of:
+                username does not exist
+                event_id does not exist
+                username is not a member of event
+                username is the event admin
+            AuthError when:
+                username is not logged in
+
+        Returns:
+            None
     """
     pass
 
