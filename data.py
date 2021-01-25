@@ -3,20 +3,40 @@ A file containing user/event data
 """
 
 
-class Region:
+MAX_DAYS = 60
+INTERVALS = 2 * 24
+
+# Days of the week (datetime)
+MON = 0
+TUE = 1
+WED = 2
+THU = 3
+FRI = 4
+SAT = 5
+SUN = 6
+
+
+from datetime import datetime
+
+
+class Schedule:
     """
-    A class to represent an interval of time.
+    A class to represent a user's availabilities, for up to 60 days from
+    the event's creation, or up to the event deadline.
 
     Attributes
     ----------
-    start : datetime.datetime object
-        start time of the time interval
-    end : datetime.datetime object
-        end time of the time interval
+    username : str
+        username of schedule owner
+    times : MAX_DAYS x INTERVALS 2D list of int
+        30 minute time intervals representing the user's availabilities.
+        E.g. times[3][14] = True represents that the user is available
+        between 7.00 and 7.30 am.
     """
-    def __init__(self, start, end):
-        self.start = start
-        self.end = end
+    def __init__(self, username):
+        self.username = username
+        self.times = [[False for _ in range(INTERVALS)]
+                      for _ in range(MAX_DAYS)]
 
 
 class Event:
@@ -33,18 +53,21 @@ class Event:
         username of event creator
     member_usernames : set of str
         set of usernames of all event members
-    availabilities : {str : {int : Region}}
-        dict of username-(dict of region_id-Region pairs) pairs representing
+    availabilities : {str : Schedule}
+        dict of username-Schedule pairs representing
         each members' available intervals of time
+    create_time : datetime.datetime
+        creation date and time of event
     """
     def __init__(self, event_id, title, admin_username):
         self.event_id = event_id
         self.title = title
         self.admin_username = admin_username
         self.member_usernames = {admin_username}
-        self.availabilities = {admin_username: {}}
+        self.availabilities = {admin_username: Schedule(admin_username)}
         self.event_length = None
         self.event_deadline = None
+        self.create_time = datetime.now()
 
 
 class User:

@@ -3,6 +3,16 @@ A file containing functions related to general member actions in an Event.
 """
 
 
+# Days of the week (datetime)
+MON = 0
+TUE = 1
+WED = 2
+THU = 3
+FRI = 4
+SAT = 5
+SUN = 6
+
+
 from error import AuthError, InputError
 from error_checks import (check_event_id, check_username, check_logged_in,
                           check_is_member)
@@ -41,8 +51,7 @@ def leave_event(username, event_id):
     event.member_usernames.remove(username)
 
 
-def edit_availability_weekly(username, event_id, edit_mode,
-                             day, start, end):
+def edit_availability_weekly(username, event_id, edit_mode, day, start, end):
     """
     Add a weekly schedule of availabilities
 
@@ -50,12 +59,23 @@ def edit_availability_weekly(username, event_id, edit_mode,
             username (str): username of editor
             event_id (int): unique ID of event
             edit_mode (bool): True for available, False for unavailable
-            day (str): day of week in schedule
+            day (int): day of week in schedule, 0 is Mon, 6 is Sun
             start (datetime.time): start time in scheduled day of week
             end (datetime.time): end time in scheduled day of week
+            (start and end are in intervals of 30 minutes)
+
+        Exceptions:
+            InputError when any of:
+                username does not exist
+                event_id does not exist
+                day is not valid
+                end is at or before start
+            AuthError when any of:
+                username is not logged in
+                username is not member of event
 
         Returns:
-            time_intervals ([Region]): list of time intervals of availability
+            None
     """
     pass
 
