@@ -13,7 +13,8 @@ SAT = 5
 SUN = 6
 
 
-from data import data, MAX_DAYS
+from datetime import timedelta
+from data import data, MAX_DAYS, INTERVALS
 from error import AuthError, InputError
 from error_checks import (check_event_id, check_username, check_logged_in,
                           check_is_member)
@@ -127,7 +128,39 @@ def edit_availability_special(username, event_id, edit_mode, start, end):
             None
 
     """
-    pass
+    check_username(username)
+    check_event_id(event_id)
+    check_is_member(username, event_id)
+    check_logged_in(username)
+
+    if end <= start:
+        raise InputError("Invalid time range")
+
+    event = data.events.get(event_id)
+    if start < event.create_time or end < event.create_time:
+        raise InputError("Start or end time is in the past")
+
+    if (start > timedelta(days=60) + event.create_time or
+        end > timedelta(days=60) + event.create_time):
+        raise InputError("Start or end time is too late")
+
+    start_index = (start.date() - event.create_time.date()).days
+    end_index = (end.date() - event.create_time.date()).days
+
+    schedule = event.availabilities[username].times
+    current_interval = start.hour * 2 + start.minute // 30
+    current_day_index = start_index
+    current = start
+
+    while current < end:
+        schedule[current_day_index][current_interval] = edit_mode
+
+        current_interval += 1
+        if current_interval == INTERVALS:
+            current_interval = 0
+            current_day_index += 1
+
+        current += timedelta(seconds=(60 * 30))
 
 
 def edit_availability_daily(username, event_id, edit_mode, day):

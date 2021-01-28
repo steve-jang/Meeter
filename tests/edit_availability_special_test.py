@@ -93,9 +93,11 @@ def test_success_edit(event_member):
     schedule = data.events[event_id].availabilities[member.username].times
     days_from_creation = 1
     start_index = 2 * start.hour + start.minute // 30
-    end_index = start_index + (2 * end.hour + end.minute)
+    end_index = 2 * end.hour + end.minute // 30
 
     for d in range(MAX_DAYS):
+        if any(schedule[d]):
+            print(d, schedule[d])
         for t in range(INTERVALS):
             if d == days_from_creation and start_index <= t < end_index:
                 assert schedule[d][t]
