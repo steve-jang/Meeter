@@ -6,7 +6,7 @@ Fixtures used for testing
 import pytest
 from data import data
 from helpers import create_bot
-from event_admin import create_event
+from event_admin import create_event, invite_user
 
 
 @pytest.fixture(autouse=True)
@@ -45,3 +45,15 @@ def event():
     bot = create_bot()
     event_id = create_event(bot.username, "ABC", [])
     return bot, event_id
+
+
+@pytest.fixture
+def event_member():
+    """
+    Return a new event's ID, its admin, as well as a member.
+    """
+    admin = create_bot()
+    member = create_bot()
+    event_id = create_event(admin.username, "ABC", [member.username])
+    invite_user(admin.username, member.username, event_id)
+    return admin, member, event_id

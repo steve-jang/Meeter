@@ -80,6 +80,8 @@ def test_success_edit(event):
     end = 14 * 2 + 1
 
     for d in range(MAX_DAYS):
+        if any(schedule.times[d]):
+            print(d)
         for t in range(INTERVALS):
             if (d - offset) % 7 == 0 and start <= t < end:
                 assert schedule.times[d][t]

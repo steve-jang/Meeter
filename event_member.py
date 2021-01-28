@@ -83,7 +83,7 @@ def edit_availability_weekly(username, event_id, edit_mode, day, start, end):
     check_is_member(username, event_id)
     check_logged_in(username)
 
-    if not (MON <= day <= SUN):
+    if not MON <= day <= SUN:
         raise InputError("Invalid week day")
 
     if end <= start:
@@ -91,7 +91,7 @@ def edit_availability_weekly(username, event_id, edit_mode, day, start, end):
 
     event = data.events.get(event_id)
     schedule = event.availabilities[username]
-    offset = day - event.create_time.weekday()
+    offset = (day - event.create_time.weekday() + 7) % 7
     start = start.hour * 2 + start.minute // 30
     end = end.hour * 2 + end.minute // 30
 
@@ -100,19 +100,31 @@ def edit_availability_weekly(username, event_id, edit_mode, day, start, end):
             schedule.times[d][t] = edit_mode
 
 
-def edit_avaliability_special(username, event_id, edit_mode, start, end):
+def edit_availability_special(username, event_id, edit_mode, start, end):
     """
-    Set availability for a specific time.
+    Set availability for a non-repeating specific time interval.
 
         Parameters:
             username (str): username of editor
             event_id (int): unique ID of event
             edit_mode (bool): True for available, False for unavailable
-            start (datetime.time): start time in scheduled day of week
-            end (datetime.time): end time in scheduled day of week
+            start (datetime.datetime): start time
+            end (datetime.datetime): end time
+            (start and end are in intervals of 30 minutes)
+
+        Exceptions:
+            AuthError when any of:
+                username is not logged in
+            InputError when any of:
+                event_id does not exist
+                username does not exist
+                username is not a member of event
+                end is before or the same as start
+                start or end is more than 60 days after event creation
+                start or end is a time in the past
 
         Returns:
-            time_intervals ([Region]): list of time intervals of availability
+            None
 
     """
     pass
@@ -120,7 +132,7 @@ def edit_avaliability_special(username, event_id, edit_mode, start, end):
 
 def edit_availability_daily(username, event_id, edit_mode, day):
     """
-    Set availabilities by day.
+    Set availabilities by full days.
 
         Parameters:
             username (str): username of editor
