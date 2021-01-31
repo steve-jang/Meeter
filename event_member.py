@@ -165,7 +165,7 @@ def edit_availability_special(username, event_id, edit_mode, start, end):
 
 def edit_availability_daily(username, event_id, edit_mode, day):
     """
-    Set availabilities by full days.
+    Set availability for a full day.
 
         Parameters:
             username (str): username of editor
@@ -173,8 +173,17 @@ def edit_availability_daily(username, event_id, edit_mode, day):
             edit_mode (bool): True for available, False for unavailable
             day (datetime.date): day chosen
 
+        Exceptions:
+            AuthError when any of:
+                username is not logged in
+            InputError when any of:
+                username does not exist
+                event_id does not exist
+                username is not part of the event
+                day is a date in the past
+
         Returns:
-            time_intervals ([Region]): list of time intervals of availability
+            None
     """
     pass
 
