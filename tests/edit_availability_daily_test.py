@@ -44,7 +44,7 @@ def test_not_logged_in(event):
 
 def test_invalid_date(event_member):
     """
-    Test when the date selected is a date in the past.
+    Test when the date selected is a date before the event creation date.
     """
     _, member, event_id = event_member
     expect_error(edit, InputError, member.username, event_id,

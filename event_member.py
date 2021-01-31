@@ -180,12 +180,23 @@ def edit_availability_daily(username, event_id, edit_mode, day):
                 username does not exist
                 event_id does not exist
                 username is not part of the event
-                day is a date in the past
+                day is a date before the event creation date
 
         Returns:
             None
     """
-    pass
+    check_username(username)
+    check_event_id(event_id)
+    check_is_member(username, event_id)
+    check_logged_in(username)
+
+    event = data.events.get(event_id)
+    if day < event.create_time.date():
+        raise InputError("Date cannot be in the past")
+
+    schedule = event.availabilities[username].times
+    offset = (day - event.create_time.date()).days
+    schedule[offset] = [edit_mode for _ in range(INTERVALS)]
 
 
 def set_favourite(username, event_id, region_id, edit_mode):
