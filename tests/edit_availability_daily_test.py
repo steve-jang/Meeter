@@ -4,7 +4,7 @@ Tests for edit_availability_daily()
 
 
 from datetime import date, timedelta
-from data import data
+from data import data, MAX_DAYS
 from auth import log_out
 from helpers import expect_error
 from error import AuthError, InputError
@@ -42,13 +42,23 @@ def test_not_logged_in(event):
     expect_error(edit, AuthError, admin.username, event_id, False, None)
 
 
-def test_invalid_date(event_member):
+def test_date_before_creation(event_member):
     """
     Test when the date selected is a date before the event creation date.
     """
     _, member, event_id = event_member
     expect_error(edit, InputError, member.username, event_id,
                  True, date(2000, 1, 1))
+
+
+def test_date_after_creation_60_days(event_member):
+    """
+    Test when the date selected is a date at least 60 days after the
+    event creation date.
+    """
+    _, member, event_id = event_member
+    expect_error(edit, InputError, member.username, event_id,
+                 True, date.today() + timedelta(days=(MAX_DAYS)))
 
 
 def test_success_edit(event_member):

@@ -69,7 +69,7 @@ def test_invalid_time_range(event_member):
 
 def test_invalid_time_in_past(event_member):
     """
-    Test when the start or end time is a time in the past.
+    Test when the start or end time is a time before the event creation.
     """
     _, member, event_id = event_member
     past = date.today() - timedelta(days=5)

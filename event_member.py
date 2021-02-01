@@ -122,7 +122,7 @@ def edit_availability_special(username, event_id, edit_mode, start, end):
                 username is not a member of event
                 end is before or the same as start
                 start or end is more than 60 days after event creation
-                start or end is a time in the past
+                start or end is before the event creation time
 
         Returns:
             None
@@ -181,6 +181,7 @@ def edit_availability_daily(username, event_id, edit_mode, day):
                 event_id does not exist
                 username is not part of the event
                 day is a date before the event creation date
+                day is a date beyond 60 days after event creation
 
         Returns:
             None
@@ -193,6 +194,9 @@ def edit_availability_daily(username, event_id, edit_mode, day):
     event = data.events.get(event_id)
     if day < event.create_time.date():
         raise InputError("Date cannot be in the past")
+
+    if day >= event.create_time.date() + timedelta(days=MAX_DAYS):
+        raise InputError("Date is too far into future")
 
     schedule = event.availabilities[username].times
     offset = (day - event.create_time.date()).days
