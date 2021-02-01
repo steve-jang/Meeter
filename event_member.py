@@ -201,19 +201,3 @@ def edit_availability_daily(username, event_id, edit_mode, day):
     schedule = event.availabilities[username].times
     offset = (day - event.create_time.date()).days
     schedule[offset] = [edit_mode for _ in range(INTERVALS)]
-
-
-def set_favourite(username, event_id, region_id, edit_mode):
-    """
-    Set favourite time ranges.
-
-        Parameters:
-            username (str): username of editor
-            event_id (int): unique ID of event
-            region_id (int): unique ID of Region (time interval)
-            edit_mode (bool): True for available, False for unavailable
-
-        Returns:
-            None
-    """
-    pass

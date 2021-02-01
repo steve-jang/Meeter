@@ -56,6 +56,10 @@ class Event:
     availabilities : {str : Schedule}
         dict of username-Schedule pairs representing
         each members' available intervals of time
+    event_length : int
+        length of event in hours
+    event_deadline : datetime.date
+        latest planned date of event
     create_time : datetime.datetime
         creation date and time of event
     """
