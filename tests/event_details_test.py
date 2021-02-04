@@ -26,12 +26,12 @@ def test_invalid_event(bot):
     expect_error(event_details, InputError, bot.username, 1)
 
 
-def test_not_member(event_member):
+def test_not_member(event, bot):
     """
     Test when the user is not a member of the event.
     """
-    _, member, event_id = event_member
-    expect_error(event_details, InputError, member.username, event_id)
+    _, event_id = event
+    expect_error(event_details, InputError, bot.username, event_id)
 
 
 def test_not_logged_in(event_member):
