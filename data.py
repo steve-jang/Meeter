@@ -3,6 +3,9 @@ A file containing user/event data
 """
 
 
+from datetime import datetime, time
+
+
 MAX_DAYS = 60
 INTERVALS = 2 * 24
 
@@ -14,9 +17,6 @@ THU = 3
 FRI = 4
 SAT = 5
 SUN = 6
-
-
-from datetime import datetime
 
 
 class Schedule:
@@ -62,6 +62,10 @@ class Event:
         latest planned date of event
     create_time : datetime.datetime
         creation date and time of event
+    min_time : datetime.time
+        desired earliest starting time of event
+    max_time : datetime.time
+        desired latest ending time of event
     """
     def __init__(self, event_id, title, admin_username):
         self.event_id = event_id
@@ -72,6 +76,10 @@ class Event:
         self.event_length = None
         self.event_deadline = None
         self.create_time = datetime.now()
+
+        # By default the event time range is from 8am to 10pm
+        self.min_time = time(8)
+        self.max_time = time(22)
 
 
 class User:

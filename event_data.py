@@ -4,12 +4,13 @@ showing event members, etc
 """
 
 
-from data import data
+from data import data, MAX_DAYS
 from error_checks import (check_event_id, check_is_member, 
                           check_logged_in, check_username)
 
 
 CUTOFF = 3
+ASSUMED_LENGTH = 3
 
 
 def event_details(username, event_id):
@@ -56,7 +57,15 @@ def find_best_times(username, event_id):
     """
     Find the best three closest time intervals for meeting,
     where 'best' is defined to be the date with the most
-    members available.
+    members available. 
+    If the event length is set, the start of the best time intervals 
+    of that length will be found, otherwise a 3 hour interval will be
+    assumed.
+    If the event deadline is set, the best times before
+    the deadline will be found, otherwise the maximum deadline
+    of 60 days past the creation date.
+    If not modified, the best times will be found within the default
+    desired time range of the event.
 
         Parameters:
             username (str): username of user
@@ -71,6 +80,7 @@ def find_best_times(username, event_id):
                 username is not logged in
 
         Returns:
-            times ([datetime.datetime]): a list of the best times
+            times ([datetime.datetime]): a list of the best times,
+            from best to worst
     """
     pass
