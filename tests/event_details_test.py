@@ -3,13 +3,13 @@ Tests for event_details()
 """
 
 
-from datetime import date, datetime, timedelta
+from datetime import date, timedelta
+from helpers import expect_error
 from data import data
 from event_data import event_details
 from error import InputError, AuthError
 from auth import log_out
 from event_admin import edit_event_deadline, edit_event_length
-from helpers import expect_error
 
 
 def test_invalid_username():
