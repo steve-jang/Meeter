@@ -8,6 +8,7 @@ from datetime import datetime, time
 
 MAX_DAYS = 60
 INTERVALS = 2 * 24
+DEFAULT_LENGTH = 3
 
 # Days of the week (datetime)
 MON = 0
@@ -73,7 +74,7 @@ class Event:
         self.admin_username = admin_username
         self.member_usernames = {admin_username}
         self.availabilities = {admin_username: Schedule(admin_username)}
-        self.event_length = None
+        self.event_length = DEFAULT_LENGTH
         self.event_deadline = None
         self.create_time = datetime.now()
 

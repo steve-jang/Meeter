@@ -7,7 +7,7 @@ from datetime import datetime, date, time, timedelta
 from helpers import expect_error
 from error import InputError, AuthError
 from data import data
-from event_data import find_best_times
+from event_data import find_best_times, find_intersection, find_best_intervals
 from auth import log_out
 from event_admin import edit_event_deadline, edit_event_length
 from event_member import (edit_availability_daily, edit_availability_special)
@@ -53,6 +53,7 @@ def test_success_find(event_member):
                         date.today() + timedelta(days=7), event_id)
     edit_event_length(admin.username, 6, event_id)
 
+    event = data.events.get(event_id)
     # Set admin's availabilities
     edit_availability_daily(admin.username, event_id, True,
                             date.today() + timedelta(days=2))
@@ -60,14 +61,17 @@ def test_success_find(event_member):
                             date.today() + timedelta(days=3))
 
     # Set member's availabilities
-    current = datetime.now().date() + timedelta(days=2)
+    current = date.today() + timedelta(days=2)
     start = datetime.combine(current, time(14))
     end = datetime.combine(current, time(20, 30))
-    edit_availability_special(admin.username, event_id, True, start, end)
-    edit_availability_daily(admin.username, event_id, True,
+    edit_availability_special(member.username, event_id, True, start, end)
+    edit_availability_daily(member.username, event_id, True,
                             date.today() + timedelta(days=3))
 
-    event = data.events.get(event_id)
+    intersection = find_intersection([s.times for s in list(event.availabilities.values())])
+    ints = find_best_intervals(intersection, 3, event)
+    print(ints)
+    
     result = find_best_times(member.username, event_id)
     assert result == [datetime.combine(current, time(14)),
                       datetime.combine(current, time(14, 30)),

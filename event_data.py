@@ -4,13 +4,14 @@ showing event members, etc
 """
 
 
-from data import data, MAX_DAYS
+from datetime import datetime, timedelta
+from data import data
 from error_checks import (check_event_id, check_is_member, 
                           check_logged_in, check_username)
 
 
 CUTOFF = 3
-ASSUMED_LENGTH = 3
+SEARCH_DELAY = 2
 
 
 def event_details(username, event_id):
@@ -83,4 +84,75 @@ def find_best_times(username, event_id):
             times ([datetime.datetime]): a list of the best times,
             from best to worst
     """
-    pass
+    check_username(username)
+    check_event_id(event_id)
+    check_is_member(username, event_id)
+    check_logged_in(username)
+
+    event = data.events.get(event_id)
+    schedules = [s.times for s in list(event.availabilities.values())]
+    intersection = find_intersection(schedules)
+    print(event.admin_username)
+    for u in event.availabilities:
+        print(u, event.availabilities[u].times[:9])
+    #print(intersection)
+    best_intervals = find_best_intervals(intersection, CUTOFF, event)
+    return best_intervals
+
+
+def find_intersection(lists):
+    """
+    Given lists, a list of 2D lists, return another list 'result' of same
+    dimensions as the 2D lists where each entry result[x][y] equals the sum
+    of True l[x][y] entries for all l in lists. Assume lists is non-empty.
+    """
+    result = lists[0][:]
+    x = len(result)
+    y = len(result[0])
+    for d in range(x):
+        for t in range(y):
+            result[d][t] = [l[d][t] for l in lists].count(True)
+
+    return result
+
+
+def time_to_index(time):
+    return time.hour * 2 + time.minute // 30
+
+
+def find_best_intervals(times, cutoff, event):
+    search_start = datetime.now() + timedelta(hours=SEARCH_DELAY)
+    min_day_index = (search_start.date() - event.create_time.date()).days
+    min_first_day_time_index = search_start.hour * 2
+    min_time_index = time_to_index(event.min_time)
+    max_time_index = time_to_index(event.max_time)
+    max_day_index = (event.event_deadline - event.create_time.date()).days
+
+    best_scores = {}
+    for d, day in enumerate(times):
+        if d < min_day_index or d > max_day_index:
+            continue
+
+        for tim in range(min_time_index, max_time_index - event.event_length * 2 + 1):
+            if d == min_day_index and tim < min_first_day_time_index:
+                continue
+
+            score = sum(day[tim:(tim + event.event_length)])
+            if len(best_scores) < cutoff:
+                best_scores[score] = (d, tim)
+            else:
+                min_best_score = min(list(best_scores.keys()))
+                if score > min_best_score:
+                    del best_scores[min_best_score]
+                    best_scores[score] = (d, tim)
+
+    highscores = sorted(list(best_scores.keys()), reverse=True)
+    return [best_scores[hs] for hs in highscores]
+
+
+def find_best_interval_starts(times, cutoff, event_id):
+    """
+    Given times (a 2D list where times[d][t] is the number of people available
+    at the corresponding time), find the best 'cutoff' starting times of best
+    intervals to meet, depending on event settings.
+    """
